@@ -658,6 +658,7 @@ func readStructColumns(t reflect.Type) (cols []*ColumnMap, version *ColumnMap, k
 				switch dbinfo[j] {
 				case "ai":
 					cm.isAutoIncr = true
+					//cm.Transient = true
 				case "nn":
 					cm.isNotNull = true
 				case "pk":
@@ -1264,7 +1265,8 @@ func rawselect(m *DbMap, exec SqlExecutor, i interface{}, query string,
 
 		field, found := t.FieldByNameFunc(func(fieldName string) bool {
 			field, _ := t.FieldByName(fieldName)
-			fieldName = field.Tag.Get("db")
+			dbinfo := strings.Split(field.Tag.Get("db"), ",")
+			fieldName = dbinfo[0]
 
 			if fieldName == "-" {
 				return false
